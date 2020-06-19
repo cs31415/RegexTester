@@ -1,177 +1,200 @@
 ﻿using System;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.IO;
-using System.Reflection;
+using System.Windows.Forms;
+using ScintillaNET;
 
-namespace RegexTestHarness
+namespace RegexTester
 {
-    public delegate void dlgHighlightMatches(Match m);
-    public delegate void dlgResumeLayout();
-
     public partial class MainForm : Form
     {
-        public static string m_input = "";
-        public static string m_pattern = "";
-        const string cacheFileName = @"cache.xml";
-        public static bool m_isGlobal = false;
-        private static bool m_ignoreCase = false;
-        private static bool m_singleLine = false;
-        private static bool m_multiLine = false;
-        private static bool m_lineByLine = false;
-        private static DateTime m_StartTime = DateTime.Now;
-        private static TimeSpan m_elapsedTime;
+        // -- todo delete
+        private string _input = "";
+        private string _pattern = "";
+        private bool _isGlobal;
+        private bool _ignoreCase;
+        private bool _singleLine;
+        private bool _multiLine;
+        private bool _lineByLine;
+        // -- todo delete
+
+        private readonly SettingsManager _settingsManager;
+        delegate void DlgHighlightMatches(Match m);
+        delegate void DlgResumeLayout();
+        delegate void DelegateMethod(params object[] args);
+
+        
+
 
         public MainForm()
         {
             InitializeComponent();
+            _settingsManager = new SettingsManager(OnLoadSettings, OnSaveSettings);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        #region Event handlers
+
+        private void MainForm_Load(object sender, EventArgs e)
         {
-            m_input = richTextBoxOutput.Text.Trim();
-            m_pattern = textBoxPattern.Text.Trim();
+            _settingsManager.LoadSettings();
+        }
 
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (File.Exists(string.Format(@"{0}\{1}", path, cacheFileName)))
-            {
-                XmlDocument xd = new XmlDocument();
-                xd.Load(cacheFileName);
-
-                string xpath = "";
-                XmlNode node = null;
-                if (m_input == "")
-                {
-                    //load from cache
-                    xpath = "//RegexCache/Input";
-                    node = xd.SelectSingleNode(xpath);
-                    m_input = node.FirstChild.Value;
-                    richTextBoxOutput.Text = m_input;
-                }
-                if (m_pattern == "")
-                {
-                    //load from cache
-                    xpath = "//RegexCache/Pattern";
-                    node = xd.SelectSingleNode(xpath);
-                    m_pattern = node.FirstChild.Value;
-                    textBoxPattern.Text = m_pattern;
-                }
-
-                xpath = "//RegexCache";
-                node = xd.SelectSingleNode(xpath);
-                m_isGlobal = Convert.ToBoolean(node.Attributes["Global"].Value);
-                checkBoxGlobal.Checked = m_isGlobal;
-
-                m_ignoreCase = Convert.ToBoolean(node.Attributes["IgnoreCase"].Value);
-                checkBoxIgnoreCase.Checked = m_ignoreCase;
-                
-                m_singleLine = Convert.ToBoolean(node.Attributes["SingleLine"].Value);
-                checkBoxSingleline.Checked = m_singleLine;
-
-                m_multiLine = Convert.ToBoolean(node.Attributes["MultiLine"].Value);
-                checkBoxMultiLine.Checked = m_multiLine;
-
-                m_lineByLine = Convert.ToBoolean(node.Attributes["LineByLine"].Value);
-                checkBoxLinebyline.Checked = m_lineByLine;
-            }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _settingsManager.SaveSettings();
         }
 
         private void buttonMatch_Click(object sender, EventArgs e)
         {
-            m_input = richTextBoxOutput.Text.Trim();
-            m_pattern = textBoxPattern.Text.Trim();
-            m_isGlobal = checkBoxGlobal.Checked;
-            m_ignoreCase = checkBoxIgnoreCase.Checked;
-            m_singleLine = checkBoxSingleline.Checked;
-            m_multiLine = checkBoxMultiLine.Checked;
-            m_lineByLine = checkBoxLinebyline.Checked;
+            // -- todo delete
+            _input = txtInputText.TextBox.Text;
+            _pattern = txtPattern.Text.Trim();
+            _isGlobal = chkGlobal.Checked;
+            _ignoreCase = chkIgnoreCase.Checked;
+            _singleLine = chkSingleline.Checked;
+            _multiLine = chkMultiLine.Checked;
+            _lineByLine = chkLinebyline.Checked;
+            // -- todo delete
 
             DoMatch();
+        }
+
+        private void dataGridMatches_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            OnSelectRow();
+        }
+
+        private void dataGridMatches_SelectionChanged(object sender, EventArgs e)
+        {
+            OnSelectRow();
+        }
+
+        private void showWhiteSpaceAndTABToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var showWhitespace = showWhiteSpaceAndTABToolStripMenuItem.Checked;
+            ToggleWhiteSpace(showWhitespace);
+
+            if (showWhitespace && showEndOfLineToolStripMenuItem.Checked)
+            {
+                showEndOfLineToolStripMenuItem.Checked = false;
+                ToggleEol(false);
+            }
+        }
+
+        private void showEndOfLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var showEol = showEndOfLineToolStripMenuItem.Checked;
+            ToggleEol(showEol);
+
+            if (showEol && showWhiteSpaceAndTABToolStripMenuItem.Checked)
+            {
+                showWhiteSpaceAndTABToolStripMenuItem.Checked = false;
+                ToggleWhiteSpace(false);
+            }
+        }
+
+        private void showAllCharactersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showEndOfLineToolStripMenuItem.Checked = showWhiteSpaceAndTABToolStripMenuItem.Checked = false;
+
+            var showAll = showAllCharactersToolStripMenuItem.Checked;
+            ToggleWhiteSpace(showAll);
+            ToggleEol(showAll);
+        }
+
+        private void showWrapSymbolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var showWrapSymbol = showWrapSymbolToolStripMenuItem.Checked;
+            txtInputText.TextBox.WrapVisualFlags = showWrapSymbol ? WrapVisualFlags.End : WrapVisualFlags.None;
+        }
+
+        private void wordWrapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var wordWrap = wordWrapToolStripMenuItem.Checked;
+            txtInputText.TextBox.WrapMode = wordWrap ? WrapMode.Word : WrapMode.None;
+        }
+
+        #endregion
+
+        #region  Private methods
+
+        private void OnLoadSettings(Settings settings)
+        {
+            txtInputText.TextBox.Text = settings.Text;
+            txtPattern.Text = settings.Pattern;
+            chkGlobal.Checked = settings.Global;
+            chkIgnoreCase.Checked = settings.IgnoreCase;
+            chkLinebyline.Checked = settings.LineByLine;
+            chkMultiLine.Checked = settings.MultiLine;
+            chkSingleline.Checked = settings.SingleLine;
+        }
+
+        private Settings OnSaveSettings()
+        {
+            var settings = new Settings();
+            settings.Pattern = txtPattern.Text;
+            settings.Text = txtInputText.TextBox.Text;
+            settings.Global = chkGlobal.Checked;
+            settings.IgnoreCase = chkIgnoreCase.Checked;
+            settings.LineByLine = chkLinebyline.Checked;
+            settings.MultiLine = chkMultiLine.Checked;
+            settings.SingleLine = chkSingleline.Checked;
+            return settings;
         }
 
         private void DoMatch()
         {
             this.Cursor = Cursors.WaitCursor;
-            this.labelStatus.Text = "Working...";
-            Timer timer = new Timer();
-            StartTimer();
 
             //clear prior matches
             this.SuspendLayout();
-            richTextBoxOutput.SelectAll();
-            richTextBoxOutput.SelectionBackColor = Color.Transparent;
-            
-            //save to cache
-            using (XmlTextWriter xw = new XmlTextWriter(cacheFileName, Encoding.UTF8))
+            ClearAllHighlights();
+            dataGridMatches.Rows.Clear();
+
+            if (_pattern != "")
             {
-                xw.Formatting = Formatting.Indented;
-                xw.WriteStartDocument();
-
-                xw.WriteStartElement("RegexCache");
-
-                xw.WriteAttributeString("Global", m_isGlobal.ToString());
-                xw.WriteAttributeString("IgnoreCase", m_ignoreCase.ToString());
-                xw.WriteAttributeString("SingleLine", m_singleLine.ToString());
-                xw.WriteAttributeString("MultiLine", m_multiLine.ToString());
-                xw.WriteAttributeString("LineByLine", m_lineByLine.ToString());
-               
-                xw.WriteStartElement("Pattern");
-                xw.WriteCData(m_pattern);
-                xw.WriteEndElement();
-
-                xw.WriteStartElement("Input");
-                xw.WriteCData(m_input);
-                xw.WriteEndElement();
-            }
-
-            //Thread t = new Thread (new ParameterizedThreadStart(DoMatchThreadFunc));
-            //t.Start();
-            DoMatchThreadFunc(null);
-            //t.Join();
-            StopTimer();
-            this.Cursor = Cursors.Default;
-            this.labelStatus.Text = "Ready";
-            this.labelTime.Text = m_elapsedTime.ToString();
-        }
-
-        void DoMatchThreadFunc(object threadParams)
-        {
-            if (m_pattern != "")
-            {
-                if (m_lineByLine)
+                if (_lineByLine)
                 {
-                    m_input.Replace("\r\n", "\n");
-                    string[] lines = m_input.Split(new char[] { '\n' }, StringSplitOptions.None);
-                    foreach (string line in lines)
+                    var matches = Regex.Matches(
+                        _input, @"[^\r\n]*(\n|\r\n?)", 
+                        RegexOptions.Multiline | RegexOptions.Compiled);
+                    for (int i=0; i<matches.Count; i++)
                     {
-                        MatchLine(line);
+                        var match = matches[i];
+                        MatchLine(match.Value);
                     }
                 }
                 else
                 {
-                    MatchLine(m_input);
+                    MatchLine(_input);
+                }
+
+                var matchCount = dataGridMatches.RowCount;
+                SetLabelText(lblMatchCount, matchCount.ToString());
+                if (matchCount > 0)
+                {
+                    dataGridMatches.Rows[0].Selected = true;
                 }
             }
             DoResumeLayout();
+
+            this.Cursor = Cursors.Default;
         }
 
         private void MatchLine(string line)
         {
-            RegexOptions opt = m_ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
-            opt = m_singleLine ? opt | RegexOptions.Singleline : opt;
-            opt = m_multiLine ? opt | RegexOptions.Multiline : opt;
-            Regex rx = new Regex(m_pattern, opt);
-
-            if (m_isGlobal)
+            RegexOptions opt = _ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+            opt = _singleLine ? opt | RegexOptions.Singleline : opt;
+            opt = _multiLine ? opt | RegexOptions.Multiline : opt;
+            Regex rx = new Regex(_pattern, opt);
+            
+            if (_isGlobal)
             {
                 MatchCollection matches = rx.Matches(line);
-                PopulateGroups(matches, rx);
                 for (int i = 0; i < matches.Count; i++)
                 {
                     Match m = matches[i];
+                    PopulateGroups(m, rx, i+1);
                     DoHighlight(m);
                 }
             }
@@ -185,10 +208,10 @@ namespace RegexTestHarness
 
         private void DoHighlight(Match m)
         {
-            if (this.richTextBoxOutput.InvokeRequired)
+            if (this.txtInputText.InvokeRequired)
             {
                 // It's on a different thread, so use Invoke.
-                dlgHighlightMatches d = new dlgHighlightMatches(HighlightMatches);
+                DlgHighlightMatches d = new DlgHighlightMatches(HighlightMatches);
                 this.Invoke(d, new object[] { m });
             }
             else
@@ -196,55 +219,71 @@ namespace RegexTestHarness
                 HighlightMatches(m);
             }        
         }
-        
-        private void PopulateGroups(MatchCollection mc, Regex rx)
-        {
-            dataGridMatches.Rows.Clear();
-            foreach(Match m in mc)
-            {
-                for (int i = 0; i < m.Groups.Count; i++)
-                {
-                    Group g = m.Groups[i];
-                    string name = rx.GroupNameFromNumber(i);
-                    string idx = g.Index.ToString().PadRight(5);
 
-                    dataGridMatches.Rows.Add(new object[]
-                    {
-                        i.ToString(), name, idx, g.Value
-                    });
-                }
-            }
-        }
-
-        private void PopulateGroups(Match m, Regex rx)
+        private void PopulateGroups(Match m, Regex rx, int matchNum = 1)
         {
-            dataGridMatches.Rows.Clear();
             for(int i=0; i<m.Groups.Count; i++)
             {
                 Group g = m.Groups[i];
                 string name = rx.GroupNameFromNumber(i);
-                string idx = g.Index.ToString().PadRight(5);
-                dataGridMatches.Rows.Add(new object[]
-                {
-                    i.ToString(), name, idx, g.Value
-                });
+                int matchIndex = g.Index;
+                string idx = (1 + matchIndex).ToString().PadRight(5);
+                int lineNumber = txtInputText.TextBox.LineFromPosition(matchIndex);
+                var line = txtInputText.TextBox.Lines[lineNumber];
+                int lineStartPos = 1 + txtInputText.TextBox.Lines[lineNumber].Position;
+                int lineEndPos = 1 + txtInputText.TextBox.Lines[lineNumber].EndPosition;
+                dataGridMatches.Rows.Add(
+                    matchNum.ToString(), 
+                    (1+i).ToString(), 
+                    name, 
+                    (1+lineNumber).ToString(), 
+                    idx, 
+                    g.Value, 
+                    lineStartPos.ToString(), 
+                    lineEndPos.ToString());
             }
         }
-        
+
+        private void OnSelectRow()
+        {
+            if (dataGridMatches.CurrentRow == null || !dataGridMatches.Columns.Contains("MatchIdx") ||
+                !dataGridMatches.Columns.Contains("MatchText"))
+            {
+                return;
+            }
+
+            int index = int.Parse((string)dataGridMatches.CurrentRow.Cells["MatchIdx"].Value);
+            string text = (string)dataGridMatches.CurrentRow.Cells["MatchText"].Value;
+
+            var textLength = txtInputText.TextBox.Text.Length;
+            UnHighlightSelection(1, 1 + textLength, HighlightLayer.HighlightWordLayer);
+            HighlightSelection(index, index + text.Length, Color.Orange, HighlightLayer.HighlightWordLayer);
+
+            int lineStartPos = int.Parse((string)dataGridMatches.CurrentRow.Cells["LineStartPos"].Value);
+            int lineEndPos = int.Parse((string)dataGridMatches.CurrentRow.Cells["LineEndPos"].Value);
+
+            // unhighlight previous line if any
+            UnHighlightSelection(1, 1 + textLength, HighlightLayer.LineLayer);
+
+            // highlight current line
+            HighlightSelection(lineStartPos, lineEndPos, Color.LemonChiffon, HighlightLayer.LineLayer);
+
+
+            // Scroll view if selection is out of visible range
+            int scrollStart = Math.Max(index, 0);
+            int scrollEnd = Math.Min(index + text.Length, textLength - 1);
+            txtInputText.TextBox.ScrollRange(scrollStart - 1, scrollEnd - 1);
+        }
+
         private void DoResumeLayout()
         {
-            if (this.richTextBoxOutput.InvokeRequired)
+            if (txtInputText.InvokeRequired)
             {
-                dlgResumeLayout d = new dlgResumeLayout(ResumeLayout2);
+                DlgResumeLayout d = ResumeLayout;
                 this.Invoke(d);
             }
             else
-                ResumeLayout2();
-        }
-
-        private void ResumeLayout2()
-        {
-            this.ResumeLayout();
+                ResumeLayout();
         }
 
         private void HighlightMatches(Match m)
@@ -253,20 +292,66 @@ namespace RegexTestHarness
             {
                 foreach (Capture c in m.Captures)
                 {
-                    richTextBoxOutput.Select(c.Index, c.Length);
-                    richTextBoxOutput.SelectionBackColor = Color.Orange;
+                    HighlightSelection(1 + c.Index, 1 + c.Index + c.Length, Color.LightGray, HighlightLayer.WordLayer);
                 }
             }
         }
 
-        public static void StartTimer()
+        private void HighlightSelection(int startIndex, int endIndex, Color color, HighlightLayer layer)
         {
-            m_StartTime = DateTime.Now;
+            txtInputText.TextBox.HighlightSelection(startIndex - 1, endIndex - 1, color, layer);
         }
-        public static void StopTimer()
+
+        private void UnHighlightSelection(int startIndex, int endIndex, HighlightLayer layer)
         {
-            DateTime endTime = DateTime.Now;
-            m_elapsedTime = endTime - m_StartTime;
+            txtInputText.TextBox.UnHighlightSelection(startIndex - 1, endIndex - 1, layer);
+        }
+
+        private void ClearAllHighlights()
+        {
+            var textLength = txtInputText.TextBox.Text.Length;
+            UnHighlightSelection(1, 1 + textLength, HighlightLayer.HighlightWordLayer);
+            UnHighlightSelection(1, 1 + textLength, HighlightLayer.WordLayer);
+            UnHighlightSelection(1, 1 + textLength, HighlightLayer.LineLayer);
+        }
+
+        private void SetLabelText(ToolStripStatusLabel label, string text)
+        {
+            InvokeIfRequired(
+                x =>
+                {
+                    label.Text = (string)x[0];
+                },
+                text);
+        }
+
+        private void InvokeIfRequired(DelegateMethod method, params object[] args)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(method, new object[] { args });
+            }
+            else
+            {
+                method(args);
+            }
+        }
+
+        private void ToggleEol(bool show)
+        {
+            txtInputText.TextBox.ViewEol = show;
+        }
+
+        private void ToggleWhiteSpace(bool show)
+        {
+            txtInputText.TextBox.ViewWhitespace = show ? WhitespaceMode.VisibleAlways : WhitespaceMode.Invisible;
+        }
+
+        #endregion
+
+        private void btnAccept_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
