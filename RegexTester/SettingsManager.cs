@@ -8,13 +8,13 @@ namespace RegexTester
     /// <summary>
     /// Persist UI settings between app runs
     /// </summary>
-    public class SettingsManager
+    public class SettingsManager<T>
     {
         readonly string _settingsFileName;
-        private readonly Action<Settings> _onLoadSettings;
-        private readonly Func<Settings> _onSaveSettings;
+        private readonly Action<T> _onLoadSettings;
+        private readonly Func<T> _onSaveSettings;
 
-        public SettingsManager(Action<Settings> onLoadSettings, Func<Settings> onSaveSettings)
+        public SettingsManager(Action<T> onLoadSettings, Func<T> onSaveSettings)
         {
             _onLoadSettings = onLoadSettings;
             _onSaveSettings = onSaveSettings;
@@ -28,7 +28,7 @@ namespace RegexTester
                 return;
 
             var settingsText = File.ReadAllText(_settingsFileName);
-            var settings = JsonConvert.DeserializeObject<Settings>(settingsText);
+            var settings = JsonConvert.DeserializeObject<T>(settingsText);
             if (settings != null)
             {
                 _onLoadSettings(settings);

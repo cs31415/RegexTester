@@ -1,7 +1,10 @@
-﻿namespace RegexTester
+﻿using System.Text.RegularExpressions;
+
+namespace RegexTester
 {
     public class MatchResult
     {
+        public Capture Capture { get; set; }
         public int MatchNum { get; set; }
         public int GroupNum { get; set; }
         public string GroupName { get; set; }

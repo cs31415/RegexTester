@@ -40,10 +40,18 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.txtPattern = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.buttonMatch = new System.Windows.Forms.ToolStripButton();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridMatches = new System.Windows.Forms.DataGridView();
+            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtInputText = new RegexTester.SciTextBoxControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblMatchCount = new System.Windows.Forms.ToolStripStatusLabel();
@@ -55,16 +63,7 @@
             this.showAllCharactersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showWrapSymbolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordWrapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.txtInputText = new RegexTester.SciTextBoxControl();
-            this.btnAccept = new System.Windows.Forms.Button();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMatches)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -145,8 +144,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this.txtPattern,
-            this.toolStripSeparator1,
-            this.buttonMatch});
+            this.toolStripSeparator1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1077, 25);
@@ -161,6 +159,7 @@
             // 
             // txtPattern
             // 
+            this.txtPattern.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPattern.Name = "txtPattern";
             this.txtPattern.Size = new System.Drawing.Size(700, 25);
             // 
@@ -168,16 +167,6 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // buttonMatch
-            // 
-            this.buttonMatch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.buttonMatch.Image = ((System.Drawing.Image)(resources.GetObject("buttonMatch.Image")));
-            this.buttonMatch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonMatch.Name = "buttonMatch";
-            this.buttonMatch.Size = new System.Drawing.Size(46, 22);
-            this.buttonMatch.Text = "Search";
-            this.buttonMatch.Click += new System.EventHandler(this.buttonMatch_Click);
             // 
             // label1
             // 
@@ -213,6 +202,51 @@
             this.dataGridMatches.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridMatches_CellClick);
             this.dataGridMatches.SelectionChanged += new System.EventHandler(this.dataGridMatches_SelectionChanged);
             // 
+            // Num
+            // 
+            this.Num.HeaderText = "No.";
+            this.Num.Name = "Num";
+            // 
+            // GroupIdx
+            // 
+            this.GroupIdx.HeaderText = "Group No.";
+            this.GroupIdx.Name = "GroupIdx";
+            this.GroupIdx.ReadOnly = true;
+            // 
+            // Group
+            // 
+            this.Group.HeaderText = "Group Name";
+            this.Group.Name = "Group";
+            // 
+            // Line
+            // 
+            this.Line.HeaderText = "Line";
+            this.Line.Name = "Line";
+            // 
+            // MatchIdx
+            // 
+            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.MatchIdx.HeaderText = "Match Position";
+            this.MatchIdx.Name = "MatchIdx";
+            // 
+            // MatchText
+            // 
+            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MatchText.HeaderText = "Match Text";
+            this.MatchText.Name = "MatchText";
+            // 
+            // LineStartPos
+            // 
+            this.LineStartPos.HeaderText = "LineStartPos";
+            this.LineStartPos.Name = "LineStartPos";
+            this.LineStartPos.Visible = false;
+            // 
+            // LineEndPos
+            // 
+            this.LineEndPos.HeaderText = "LineEndPos";
+            this.LineEndPos.Name = "LineEndPos";
+            this.LineEndPos.Visible = false;
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -232,6 +266,19 @@
             this.splitContainer1.Size = new System.Drawing.Size(1077, 740);
             this.splitContainer1.SplitterDistance = 389;
             this.splitContainer1.TabIndex = 18;
+            // 
+            // txtInputText
+            // 
+            this.txtInputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInputText.BackColor = System.Drawing.Color.Transparent;
+            this.txtInputText.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtInputText.Location = new System.Drawing.Point(0, 0);
+            this.txtInputText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtInputText.Name = "txtInputText";
+            this.txtInputText.Size = new System.Drawing.Size(1077, 390);
+            this.txtInputText.TabIndex = 9;
             // 
             // statusStrip1
             // 
@@ -328,81 +375,24 @@
             this.wordWrapToolStripMenuItem.Text = "Word wrap";
             this.wordWrapToolStripMenuItem.Click += new System.EventHandler(this.wordWrapToolStripMenuItem_Click);
             // 
-            // Num
+            // btnSearch
             // 
-            this.Num.HeaderText = "No.";
-            this.Num.Name = "Num";
-            // 
-            // GroupIdx
-            // 
-            this.GroupIdx.HeaderText = "Group No.";
-            this.GroupIdx.Name = "GroupIdx";
-            this.GroupIdx.ReadOnly = true;
-            // 
-            // Group
-            // 
-            this.Group.HeaderText = "Group Name";
-            this.Group.Name = "Group";
-            // 
-            // Line
-            // 
-            this.Line.HeaderText = "Line";
-            this.Line.Name = "Line";
-            // 
-            // MatchIdx
-            // 
-            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.MatchIdx.HeaderText = "Match Position";
-            this.MatchIdx.Name = "MatchIdx";
-            // 
-            // MatchText
-            // 
-            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MatchText.HeaderText = "Match Text";
-            this.MatchText.Name = "MatchText";
-            // 
-            // LineStartPos
-            // 
-            this.LineStartPos.HeaderText = "LineStartPos";
-            this.LineStartPos.Name = "LineStartPos";
-            this.LineStartPos.Visible = false;
-            // 
-            // LineEndPos
-            // 
-            this.LineEndPos.HeaderText = "LineEndPos";
-            this.LineEndPos.Name = "LineEndPos";
-            this.LineEndPos.Visible = false;
-            // 
-            // txtInputText
-            // 
-            this.txtInputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInputText.BackColor = System.Drawing.Color.Transparent;
-            this.txtInputText.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtInputText.Location = new System.Drawing.Point(0, 0);
-            this.txtInputText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.txtInputText.Name = "txtInputText";
-            this.txtInputText.Size = new System.Drawing.Size(1077, 390);
-            this.txtInputText.TabIndex = 9;
-            // 
-            // btnAccept
-            // 
-            this.btnAccept.Location = new System.Drawing.Point(754, 52);
-            this.btnAccept.Name = "btnAccept";
-            this.btnAccept.Size = new System.Drawing.Size(75, 23);
-            this.btnAccept.TabIndex = 20;
-            this.btnAccept.Text = "Accept";
-            this.btnAccept.UseVisualStyleBackColor = true;
-            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
+            this.btnSearch.Location = new System.Drawing.Point(767, 25);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(102, 23);
+            this.btnSearch.TabIndex = 20;
+            this.btnSearch.Text = "Search";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // MainForm
             // 
+            this.AcceptButton = this.btnSearch;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1077, 863);
-            this.Controls.Add(this.btnAccept);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
@@ -448,7 +438,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripTextBox txtPattern;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton buttonMatch;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dataGridMatches;
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
@@ -472,7 +461,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn MatchText;
         private System.Windows.Forms.DataGridViewTextBoxColumn LineStartPos;
         private System.Windows.Forms.DataGridViewTextBoxColumn LineEndPos;
-        private System.Windows.Forms.Button btnAccept;
+        private System.Windows.Forms.Button btnSearch;
     }
 }
 
