@@ -1,9 +1,9 @@
 ﻿namespace RegexTester
 {
     /// <summary>
-    /// Settings to persist
+    /// Search settings
     /// </summary>
-    public class Settings
+    public class SearchSettings
     {
         public string Pattern { get; set; }
         public string Text { get; set; }

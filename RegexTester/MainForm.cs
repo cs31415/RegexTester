@@ -8,28 +8,27 @@ namespace RegexTester
 {
     public partial class MainForm : Form
     {
-        // -- todo delete
-        private string _input = "";
-        private string _pattern = "";
-        private bool _isGlobal;
-        private bool _ignoreCase;
-        private bool _singleLine;
-        private bool _multiLine;
-        private bool _lineByLine;
-        // -- todo delete
+        /// <summary>
+        /// Inputs
+        /// </summary>
+        private string Input { get => txtInputText.TextBox.Text; set => txtInputText.TextBox.Text = value; }
+        private string Pattern { get => txtPattern.Text.Trim(); set => txtPattern.Text = value; }
+        private bool Global { get => chkGlobal.Checked; set => chkGlobal.Checked = value; }
+        private bool IgnoreCase { get => chkIgnoreCase.Checked; set => chkIgnoreCase.Checked = value; }
+        private bool SingleLine { get => chkSingleline.Checked; set => chkSingleline.Checked = value; }
+        private bool MultiLine { get => chkMultiLine.Checked; set => chkMultiLine.Checked = value; }
+        private bool LineByLine { get => chkLinebyline.Checked; set => chkLinebyline.Checked = value; }
 
-        private readonly SettingsManager _settingsManager;
+        private readonly SettingsManager<SearchSettings> _settingsManager;
+
         delegate void DlgHighlightMatches(Match m);
         delegate void DlgResumeLayout();
         delegate void DelegateMethod(params object[] args);
 
-        
-
-
         public MainForm()
         {
             InitializeComponent();
-            _settingsManager = new SettingsManager(OnLoadSettings, OnSaveSettings);
+            _settingsManager = new SettingsManager<SearchSettings>(OnLoadSettings, OnSaveSettings);
         }
 
         #region Event handlers
@@ -44,19 +43,56 @@ namespace RegexTester
             _settingsManager.SaveSettings();
         }
 
-        private void buttonMatch_Click(object sender, EventArgs e)
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            // -- todo delete
-            _input = txtInputText.TextBox.Text;
-            _pattern = txtPattern.Text.Trim();
-            _isGlobal = chkGlobal.Checked;
-            _ignoreCase = chkIgnoreCase.Checked;
-            _singleLine = chkSingleline.Checked;
-            _multiLine = chkMultiLine.Checked;
-            _lineByLine = chkLinebyline.Checked;
-            // -- todo delete
+            this.Cursor = Cursors.WaitCursor;
 
-            DoMatch();
+            //clear prior matches
+            this.SuspendLayout();
+            ClearAllHighlights();
+            dataGridMatches.Rows.Clear();
+
+            if (Pattern != "")
+            {
+                var searchHelper = new SearchHelper();
+                var searchSettings = new SearchSettings
+                {
+                    Text = Input,
+                    Pattern = Pattern,
+                    IgnoreCase = IgnoreCase,
+                    Global = Global,
+                    LineByLine = LineByLine,
+                    MultiLine = MultiLine,
+                    SingleLine = SingleLine
+                };
+                var results = searchHelper.Match(searchSettings);
+
+                var matchCount = results.Count;
+                SetLabelText(lblMatchCount, matchCount.ToString());
+
+                foreach (var result in results)
+                {
+                    dataGridMatches.Rows.Add(
+                        result.MatchNum.ToString(),
+                        result.GroupNum.ToString(),
+                        result.GroupName,
+                        result.LineNum.ToString(),
+                        result.MatchPos.ToString(),
+                        result.MatchText,
+                        result.LineStartPos.ToString(),
+                        result.LineEndPos.ToString()
+                    );
+                    DoHighlight(result);
+                }
+
+                if (matchCount > 0)
+                {
+                    dataGridMatches.Rows[0].Selected = true;
+                }
+            }
+            DoResumeLayout();
+
+            this.Cursor = Cursors.Default;
         }
 
         private void dataGridMatches_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -118,130 +154,44 @@ namespace RegexTester
 
         #region  Private methods
 
-        private void OnLoadSettings(Settings settings)
+        private void OnLoadSettings(SearchSettings settings)
         {
-            txtInputText.TextBox.Text = settings.Text;
-            txtPattern.Text = settings.Pattern;
-            chkGlobal.Checked = settings.Global;
-            chkIgnoreCase.Checked = settings.IgnoreCase;
-            chkLinebyline.Checked = settings.LineByLine;
-            chkMultiLine.Checked = settings.MultiLine;
-            chkSingleline.Checked = settings.SingleLine;
+            Input = settings.Text;
+            Pattern = settings.Pattern;
+            Global = settings.Global;
+            IgnoreCase = settings.IgnoreCase;
+            LineByLine = settings.LineByLine;
+            MultiLine = settings.MultiLine;
+            SingleLine = settings.SingleLine;
         }
 
-        private Settings OnSaveSettings()
+        private SearchSettings OnSaveSettings()
         {
-            var settings = new Settings();
-            settings.Pattern = txtPattern.Text;
-            settings.Text = txtInputText.TextBox.Text;
-            settings.Global = chkGlobal.Checked;
-            settings.IgnoreCase = chkIgnoreCase.Checked;
-            settings.LineByLine = chkLinebyline.Checked;
-            settings.MultiLine = chkMultiLine.Checked;
-            settings.SingleLine = chkSingleline.Checked;
+            var settings = new SearchSettings
+            {
+                Pattern = Pattern,
+                Text = Input,
+                Global = Global,
+                IgnoreCase = IgnoreCase,
+                LineByLine = LineByLine,
+                MultiLine = MultiLine,
+                SingleLine = SingleLine
+            };
             return settings;
         }
 
-        private void DoMatch()
-        {
-            this.Cursor = Cursors.WaitCursor;
-
-            //clear prior matches
-            this.SuspendLayout();
-            ClearAllHighlights();
-            dataGridMatches.Rows.Clear();
-
-            if (_pattern != "")
-            {
-                if (_lineByLine)
-                {
-                    var matches = Regex.Matches(
-                        _input, @"[^\r\n]*(\n|\r\n?)", 
-                        RegexOptions.Multiline | RegexOptions.Compiled);
-                    for (int i=0; i<matches.Count; i++)
-                    {
-                        var match = matches[i];
-                        MatchLine(match.Value);
-                    }
-                }
-                else
-                {
-                    MatchLine(_input);
-                }
-
-                var matchCount = dataGridMatches.RowCount;
-                SetLabelText(lblMatchCount, matchCount.ToString());
-                if (matchCount > 0)
-                {
-                    dataGridMatches.Rows[0].Selected = true;
-                }
-            }
-            DoResumeLayout();
-
-            this.Cursor = Cursors.Default;
-        }
-
-        private void MatchLine(string line)
-        {
-            RegexOptions opt = _ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
-            opt = _singleLine ? opt | RegexOptions.Singleline : opt;
-            opt = _multiLine ? opt | RegexOptions.Multiline : opt;
-            Regex rx = new Regex(_pattern, opt);
-            
-            if (_isGlobal)
-            {
-                MatchCollection matches = rx.Matches(line);
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    Match m = matches[i];
-                    PopulateGroups(m, rx, i+1);
-                    DoHighlight(m);
-                }
-            }
-            else
-            {
-                Match m = rx.Match(line);
-                PopulateGroups(m, rx);
-                DoHighlight(m);
-            }
-        }
-
-        private void DoHighlight(Match m)
+        private void DoHighlight(Capture c)
         {
             if (this.txtInputText.InvokeRequired)
             {
                 // It's on a different thread, so use Invoke.
-                DlgHighlightMatches d = new DlgHighlightMatches(HighlightMatches);
-                this.Invoke(d, new object[] { m });
+                DlgHighlightMatches d = HighlightMatches;
+                this.Invoke(d, c);
             }
             else
             {
-                HighlightMatches(m);
+                HighlightMatches(c);
             }        
-        }
-
-        private void PopulateGroups(Match m, Regex rx, int matchNum = 1)
-        {
-            for(int i=0; i<m.Groups.Count; i++)
-            {
-                Group g = m.Groups[i];
-                string name = rx.GroupNameFromNumber(i);
-                int matchIndex = g.Index;
-                string idx = (1 + matchIndex).ToString().PadRight(5);
-                int lineNumber = txtInputText.TextBox.LineFromPosition(matchIndex);
-                var line = txtInputText.TextBox.Lines[lineNumber];
-                int lineStartPos = 1 + txtInputText.TextBox.Lines[lineNumber].Position;
-                int lineEndPos = 1 + txtInputText.TextBox.Lines[lineNumber].EndPosition;
-                dataGridMatches.Rows.Add(
-                    matchNum.ToString(), 
-                    (1+i).ToString(), 
-                    name, 
-                    (1+lineNumber).ToString(), 
-                    idx, 
-                    g.Value, 
-                    lineStartPos.ToString(), 
-                    lineEndPos.ToString());
-            }
         }
 
         private void OnSelectRow()
@@ -286,15 +236,28 @@ namespace RegexTester
                 ResumeLayout();
         }
 
-        private void HighlightMatches(Match m)
+        private void HighlightMatches(Capture c)
         {
-            if (m.Success)
+            HighlightSelection(1 + c.Index, 1 + c.Index + c.Length, Color.BurlyWood, HighlightLayer.WordLayer);
+        }
+
+        private void DoHighlight(MatchResult r)
+        {
+            if (this.txtInputText.InvokeRequired)
             {
-                foreach (Capture c in m.Captures)
-                {
-                    HighlightSelection(1 + c.Index, 1 + c.Index + c.Length, Color.LightGray, HighlightLayer.WordLayer);
-                }
+                // It's on a different thread, so use Invoke.
+                DlgHighlightMatches d = HighlightMatches;
+                this.Invoke(d, r);
             }
+            else
+            {
+                HighlightMatches(r);
+            }
+        }
+
+        private void HighlightMatches(MatchResult r)
+        {
+            HighlightSelection(r.MatchPos, r.MatchPos + r.MatchText.Length, Color.BurlyWood, HighlightLayer.WordLayer);
         }
 
         private void HighlightSelection(int startIndex, int endIndex, Color color, HighlightLayer layer)
@@ -348,10 +311,5 @@ namespace RegexTester
         }
 
         #endregion
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
