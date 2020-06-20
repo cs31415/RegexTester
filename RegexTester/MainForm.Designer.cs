@@ -196,6 +196,7 @@
             this.LineEndPos});
             this.dataGridMatches.Location = new System.Drawing.Point(0, 0);
             this.dataGridMatches.Name = "dataGridMatches";
+            this.dataGridMatches.ReadOnly = true;
             this.dataGridMatches.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridMatches.Size = new System.Drawing.Size(1077, 347);
             this.dataGridMatches.TabIndex = 11;
@@ -206,6 +207,7 @@
             // 
             this.Num.HeaderText = "No.";
             this.Num.Name = "Num";
+            this.Num.ReadOnly = true;
             // 
             // GroupIdx
             // 
@@ -217,34 +219,40 @@
             // 
             this.Group.HeaderText = "Group Name";
             this.Group.Name = "Group";
+            this.Group.ReadOnly = true;
             // 
             // Line
             // 
             this.Line.HeaderText = "Line";
             this.Line.Name = "Line";
+            this.Line.ReadOnly = true;
             // 
             // MatchIdx
             // 
             this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.MatchIdx.HeaderText = "Match Position";
             this.MatchIdx.Name = "MatchIdx";
+            this.MatchIdx.ReadOnly = true;
             // 
             // MatchText
             // 
             this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.MatchText.HeaderText = "Match Text";
             this.MatchText.Name = "MatchText";
+            this.MatchText.ReadOnly = true;
             // 
             // LineStartPos
             // 
             this.LineStartPos.HeaderText = "LineStartPos";
             this.LineStartPos.Name = "LineStartPos";
+            this.LineStartPos.ReadOnly = true;
             this.LineStartPos.Visible = false;
             // 
             // LineEndPos
             // 
             this.LineEndPos.HeaderText = "LineEndPos";
             this.LineEndPos.Name = "LineEndPos";
+            this.LineEndPos.ReadOnly = true;
             this.LineEndPos.Visible = false;
             // 
             // splitContainer1

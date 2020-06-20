@@ -82,7 +82,7 @@ namespace RegexTester
                         result.LineStartPos.ToString(),
                         result.LineEndPos.ToString()
                     );
-                    DoHighlight(result.Capture);
+                    DoHighlight(result);
                 }
 
                 if (matchCount > 0)
@@ -239,6 +239,25 @@ namespace RegexTester
         private void HighlightMatches(Capture c)
         {
             HighlightSelection(1 + c.Index, 1 + c.Index + c.Length, Color.BurlyWood, HighlightLayer.WordLayer);
+        }
+
+        private void DoHighlight(MatchResult r)
+        {
+            if (this.txtInputText.InvokeRequired)
+            {
+                // It's on a different thread, so use Invoke.
+                DlgHighlightMatches d = HighlightMatches;
+                this.Invoke(d, r);
+            }
+            else
+            {
+                HighlightMatches(r);
+            }
+        }
+
+        private void HighlightMatches(MatchResult r)
+        {
+            HighlightSelection(r.MatchPos, r.MatchPos + r.MatchText.Length, Color.BurlyWood, HighlightLayer.WordLayer);
         }
 
         private void HighlightSelection(int startIndex, int endIndex, Color color, HighlightLayer layer)
