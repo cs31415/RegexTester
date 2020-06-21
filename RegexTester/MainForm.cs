@@ -78,6 +78,7 @@ namespace RegexTester
                         result.GroupName,
                         result.LineNum.ToString(),
                         result.MatchPos.ToString(),
+                        result.MatchText.Length.ToString(),
                         result.MatchText,
                         result.LineStartPos.ToString(),
                         result.LineEndPos.ToString()
@@ -87,6 +88,7 @@ namespace RegexTester
 
                 if (matchCount > 0)
                 {
+                    dataGridMatches.Select();
                     dataGridMatches.Rows[0].Selected = true;
                 }
             }
@@ -180,20 +182,6 @@ namespace RegexTester
             return settings;
         }
 
-        private void DoHighlight(Capture c)
-        {
-            if (this.txtInputText.InvokeRequired)
-            {
-                // It's on a different thread, so use Invoke.
-                DlgHighlightMatches d = HighlightMatches;
-                this.Invoke(d, c);
-            }
-            else
-            {
-                HighlightMatches(c);
-            }        
-        }
-
         private void OnSelectRow()
         {
             if (dataGridMatches.CurrentRow == null || !dataGridMatches.Columns.Contains("MatchIdx") ||
@@ -203,11 +191,11 @@ namespace RegexTester
             }
 
             int index = int.Parse((string)dataGridMatches.CurrentRow.Cells["MatchIdx"].Value);
-            string text = (string)dataGridMatches.CurrentRow.Cells["MatchText"].Value;
+            string matchText = (string)dataGridMatches.CurrentRow.Cells["MatchText"].Value;
 
             var textLength = txtInputText.TextBox.Text.Length;
             UnHighlightSelection(1, 1 + textLength, HighlightLayer.HighlightWordLayer);
-            HighlightSelection(index, index + text.Length, Color.Orange, HighlightLayer.HighlightWordLayer);
+            HighlightSelection(index, index + matchText.Length, Color.Orange, HighlightLayer.HighlightWordLayer);
 
             int lineStartPos = int.Parse((string)dataGridMatches.CurrentRow.Cells["LineStartPos"].Value);
             int lineEndPos = int.Parse((string)dataGridMatches.CurrentRow.Cells["LineEndPos"].Value);
@@ -218,10 +206,12 @@ namespace RegexTester
             // highlight current line
             HighlightSelection(lineStartPos, lineEndPos, Color.LemonChiffon, HighlightLayer.LineLayer);
 
+            // Set current position to the match start position
+            txtInputText.TextBox.SetSelection(index - 1, index - 1);
 
             // Scroll view if selection is out of visible range
             int scrollStart = Math.Max(index, 0);
-            int scrollEnd = Math.Min(index + text.Length, textLength - 1);
+            int scrollEnd = Math.Min(index + matchText.Length, textLength - 1);
             txtInputText.TextBox.ScrollRange(scrollStart - 1, scrollEnd - 1);
         }
 
