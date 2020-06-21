@@ -67,8 +67,8 @@
             // toolStripStatusLabel4
             // 
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(35, 17);
-            this.toolStripStatusLabel4.Text = "Line: ";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(32, 17);
+            this.toolStripStatusLabel4.Text = "Line:";
             // 
             // lblLineNumber
             // 
@@ -78,8 +78,8 @@
             // toolStripStatusLabel5
             // 
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(31, 17);
-            this.toolStripStatusLabel5.Text = "Col: ";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(28, 17);
+            this.toolStripStatusLabel5.Text = "Col:";
             // 
             // lblColumnNumber
             // 

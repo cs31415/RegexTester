@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.chkGlobal = new System.Windows.Forms.CheckBox();
             this.chkIgnoreCase = new System.Windows.Forms.CheckBox();
@@ -42,14 +43,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridMatches = new System.Windows.Forms.DataGridView();
-            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtInputText = new RegexTester.SciTextBoxControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -64,6 +57,15 @@
             this.showWrapSymbolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordWrapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSearch = new System.Windows.Forms.Button();
+            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMatches)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -180,6 +182,8 @@
             // dataGridMatches
             // 
             this.dataGridMatches.AllowUserToAddRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.dataGridMatches.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridMatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -191,6 +195,7 @@
             this.Group,
             this.Line,
             this.MatchIdx,
+            this.MatchLength,
             this.MatchText,
             this.LineStartPos,
             this.LineEndPos});
@@ -202,58 +207,6 @@
             this.dataGridMatches.TabIndex = 11;
             this.dataGridMatches.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridMatches_CellClick);
             this.dataGridMatches.SelectionChanged += new System.EventHandler(this.dataGridMatches_SelectionChanged);
-            // 
-            // Num
-            // 
-            this.Num.HeaderText = "No.";
-            this.Num.Name = "Num";
-            this.Num.ReadOnly = true;
-            // 
-            // GroupIdx
-            // 
-            this.GroupIdx.HeaderText = "Group No.";
-            this.GroupIdx.Name = "GroupIdx";
-            this.GroupIdx.ReadOnly = true;
-            // 
-            // Group
-            // 
-            this.Group.HeaderText = "Group Name";
-            this.Group.Name = "Group";
-            this.Group.ReadOnly = true;
-            // 
-            // Line
-            // 
-            this.Line.HeaderText = "Line";
-            this.Line.Name = "Line";
-            this.Line.ReadOnly = true;
-            // 
-            // MatchIdx
-            // 
-            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.MatchIdx.HeaderText = "Match Position";
-            this.MatchIdx.Name = "MatchIdx";
-            this.MatchIdx.ReadOnly = true;
-            // 
-            // MatchText
-            // 
-            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MatchText.HeaderText = "Match Text";
-            this.MatchText.Name = "MatchText";
-            this.MatchText.ReadOnly = true;
-            // 
-            // LineStartPos
-            // 
-            this.LineStartPos.HeaderText = "LineStartPos";
-            this.LineStartPos.Name = "LineStartPos";
-            this.LineStartPos.ReadOnly = true;
-            this.LineStartPos.Visible = false;
-            // 
-            // LineEndPos
-            // 
-            this.LineEndPos.HeaderText = "LineEndPos";
-            this.LineEndPos.Name = "LineEndPos";
-            this.LineEndPos.ReadOnly = true;
-            this.LineEndPos.Visible = false;
             // 
             // splitContainer1
             // 
@@ -393,6 +346,64 @@
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
+            // Num
+            // 
+            this.Num.HeaderText = "No.";
+            this.Num.Name = "Num";
+            this.Num.ReadOnly = true;
+            // 
+            // GroupIdx
+            // 
+            this.GroupIdx.HeaderText = "Group No.";
+            this.GroupIdx.Name = "GroupIdx";
+            this.GroupIdx.ReadOnly = true;
+            // 
+            // Group
+            // 
+            this.Group.HeaderText = "Group Name";
+            this.Group.Name = "Group";
+            this.Group.ReadOnly = true;
+            // 
+            // Line
+            // 
+            this.Line.HeaderText = "Line";
+            this.Line.Name = "Line";
+            this.Line.ReadOnly = true;
+            // 
+            // MatchIdx
+            // 
+            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.MatchIdx.HeaderText = "Match Position";
+            this.MatchIdx.Name = "MatchIdx";
+            this.MatchIdx.ReadOnly = true;
+            // 
+            // MatchLength
+            // 
+            this.MatchLength.HeaderText = "Match Length";
+            this.MatchLength.Name = "MatchLength";
+            this.MatchLength.ReadOnly = true;
+            // 
+            // MatchText
+            // 
+            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MatchText.HeaderText = "Match Text";
+            this.MatchText.Name = "MatchText";
+            this.MatchText.ReadOnly = true;
+            // 
+            // LineStartPos
+            // 
+            this.LineStartPos.HeaderText = "LineStartPos";
+            this.LineStartPos.Name = "LineStartPos";
+            this.LineStartPos.ReadOnly = true;
+            this.LineStartPos.Visible = false;
+            // 
+            // LineEndPos
+            // 
+            this.LineEndPos.HeaderText = "LineEndPos";
+            this.LineEndPos.Name = "LineEndPos";
+            this.LineEndPos.ReadOnly = true;
+            this.LineEndPos.Visible = false;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnSearch;
@@ -461,15 +472,16 @@
         private System.Windows.Forms.ToolStripMenuItem showEndOfLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showWrapSymbolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem wordWrapToolStripMenuItem;
+        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.DataGridViewTextBoxColumn Num;
         private System.Windows.Forms.DataGridViewTextBoxColumn GroupIdx;
         private System.Windows.Forms.DataGridViewTextBoxColumn Group;
         private System.Windows.Forms.DataGridViewTextBoxColumn Line;
         private System.Windows.Forms.DataGridViewTextBoxColumn MatchIdx;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MatchLength;
         private System.Windows.Forms.DataGridViewTextBoxColumn MatchText;
         private System.Windows.Forms.DataGridViewTextBoxColumn LineStartPos;
         private System.Windows.Forms.DataGridViewTextBoxColumn LineEndPos;
-        private System.Windows.Forms.Button btnSearch;
     }
 }
 

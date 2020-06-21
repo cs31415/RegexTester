@@ -10,3 +10,12 @@ Regular expression tester for testing .NET regular expressions.
 4. Click on the `Search` button.
 The search results are displayed in the bottom pane. Selecting a row in the
 result table highlights the match text and match line.
+
+A few niceties:
+1. The last entered inputs are persisted and auto-populated when the program is
+relaunched.
+
+2. Hitting the `Enter` or `Return` key runs the search.
+
+3. The View menu provides a way to wrap/unwrap text and show/hide non-alphanumeric
+characters.
