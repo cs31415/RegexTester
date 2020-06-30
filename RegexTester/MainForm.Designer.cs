@@ -43,6 +43,15 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridMatches = new System.Windows.Forms.DataGridView();
+            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtInputText = new RegexTester.SciTextBoxControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -57,15 +66,6 @@
             this.showWrapSymbolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordWrapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSearch = new System.Windows.Forms.Button();
-            this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.GroupIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Group = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchIdx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MatchText = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineStartPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LineEndPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMatches)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -208,6 +208,64 @@
             this.dataGridMatches.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridMatches_CellClick);
             this.dataGridMatches.SelectionChanged += new System.EventHandler(this.dataGridMatches_SelectionChanged);
             // 
+            // Num
+            // 
+            this.Num.HeaderText = "No.";
+            this.Num.Name = "Num";
+            this.Num.ReadOnly = true;
+            // 
+            // GroupIdx
+            // 
+            this.GroupIdx.HeaderText = "Group No.";
+            this.GroupIdx.Name = "GroupIdx";
+            this.GroupIdx.ReadOnly = true;
+            // 
+            // Group
+            // 
+            this.Group.HeaderText = "Group Name";
+            this.Group.Name = "Group";
+            this.Group.ReadOnly = true;
+            // 
+            // Line
+            // 
+            this.Line.HeaderText = "Line";
+            this.Line.Name = "Line";
+            this.Line.ReadOnly = true;
+            // 
+            // MatchIdx
+            // 
+            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.MatchIdx.HeaderText = "Match Position";
+            this.MatchIdx.Name = "MatchIdx";
+            this.MatchIdx.ReadOnly = true;
+            // 
+            // MatchLength
+            // 
+            this.MatchLength.HeaderText = "Match Length";
+            this.MatchLength.Name = "MatchLength";
+            this.MatchLength.ReadOnly = true;
+            // 
+            // MatchText
+            // 
+            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MatchText.HeaderText = "Match Text";
+            this.MatchText.Name = "MatchText";
+            this.MatchText.ReadOnly = true;
+            // 
+            // LineStartPos
+            // 
+            this.LineStartPos.HeaderText = "LineStartPos";
+            this.LineStartPos.Name = "LineStartPos";
+            this.LineStartPos.ReadOnly = true;
+            this.LineStartPos.Visible = false;
+            // 
+            // LineEndPos
+            // 
+            this.LineEndPos.HeaderText = "LineEndPos";
+            this.LineEndPos.Name = "LineEndPos";
+            this.LineEndPos.ReadOnly = true;
+            this.LineEndPos.Visible = false;
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -345,64 +403,6 @@
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-            // 
-            // Num
-            // 
-            this.Num.HeaderText = "No.";
-            this.Num.Name = "Num";
-            this.Num.ReadOnly = true;
-            // 
-            // GroupIdx
-            // 
-            this.GroupIdx.HeaderText = "Group No.";
-            this.GroupIdx.Name = "GroupIdx";
-            this.GroupIdx.ReadOnly = true;
-            // 
-            // Group
-            // 
-            this.Group.HeaderText = "Group Name";
-            this.Group.Name = "Group";
-            this.Group.ReadOnly = true;
-            // 
-            // Line
-            // 
-            this.Line.HeaderText = "Line";
-            this.Line.Name = "Line";
-            this.Line.ReadOnly = true;
-            // 
-            // MatchIdx
-            // 
-            this.MatchIdx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.MatchIdx.HeaderText = "Match Position";
-            this.MatchIdx.Name = "MatchIdx";
-            this.MatchIdx.ReadOnly = true;
-            // 
-            // MatchLength
-            // 
-            this.MatchLength.HeaderText = "Match Length";
-            this.MatchLength.Name = "MatchLength";
-            this.MatchLength.ReadOnly = true;
-            // 
-            // MatchText
-            // 
-            this.MatchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MatchText.HeaderText = "Match Text";
-            this.MatchText.Name = "MatchText";
-            this.MatchText.ReadOnly = true;
-            // 
-            // LineStartPos
-            // 
-            this.LineStartPos.HeaderText = "LineStartPos";
-            this.LineStartPos.Name = "LineStartPos";
-            this.LineStartPos.ReadOnly = true;
-            this.LineStartPos.Visible = false;
-            // 
-            // LineEndPos
-            // 
-            this.LineEndPos.HeaderText = "LineEndPos";
-            this.LineEndPos.Name = "LineEndPos";
-            this.LineEndPos.ReadOnly = true;
-            this.LineEndPos.Visible = false;
             // 
             // MainForm
             // 
